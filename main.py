@@ -8,7 +8,15 @@ class RentApp:
     def __int__(self):
         # basic window setup
         window = tk.Tk()
-        button1 = tk.Button()
+        tenantBtn = tk.Button(window, text="Tenant Management", bg='orange')
+        rentBtn = tk.Button(window, text="Rent Management")
+        reportBtn = tk.Button(window, text="Finanacial")
+        tenantBtn.grid(column=0, row=0)
+        rentBtn.grid(column=1, row=0)
+        reportBtn.grid(column=2, row=0)
+        tenantBtn.pack()
+        rentBtn.pack()
+        reportBtn.pack()
         window.title("Tenant Management System")
         window.geometry('700x550')
 
