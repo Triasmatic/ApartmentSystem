@@ -42,3 +42,12 @@ class Client:
         
 driver = Client()
 
+while True:
+    driver.display_input_menu()
+    option = input()
+    
+    if option == "t":
+        driver.input_tenant()
+        
+    elif option == "d":
+        driver.display_tenants()
