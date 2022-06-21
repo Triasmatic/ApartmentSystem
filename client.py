@@ -1,3 +1,4 @@
+from unittest import case
 from tenant import *
 # from TenantList import *
 
@@ -10,7 +11,7 @@ class Client:
     
     def display_main_menu(self) -> None:
         print("i - input data\nd - display report\nq - quit program\n")
-        return
+        return 0
     
     def display_input_menu(self) -> None:
         print("t - add tenant\nr - record rent\ne - record expense\n")
@@ -25,18 +26,19 @@ class Client:
         else:
             print("Room is occupied")
             
-            
+        
         return
     
+    def display_tenants(self):
+        print("Room - Name")
+        print("-----------")
+        for element in self.tenantList:
+            print(self.tenantList.get(element))
+            
+        return  
     
     
    
         
-# driver = Client()
-# while True:
-#     driver.display_main_menu()
+driver = Client()
 
-#     driver.input_tenant()
-
-#     print(driver.tenantList)
-    
