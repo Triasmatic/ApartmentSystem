@@ -7,19 +7,25 @@ class Client:
         self.expenseList = []
         pass
     
-    def main_menu(self) -> None:
+    def display_main_menu(self) -> None:
         print("i - input data\nd - display report\nq - quit program\n")
         return
     
-    def input_menu(self) -> None:
+    def display_input_menu(self) -> None:
         print("t - add tenant\nr - record rent\ne - record expense\n")
         return
     
-    def tenant_input(self) -> None:
-        name = input("Enter tenant name")
-        apt_num = input("Enter apt number")
+    def input_tenant(self) -> None:
+        name = input("Enter tenant name: ")
+        apt_num = input("Enter apt number: ")
         self.tenantList.append(Tenant(name, apt_num))
         return
+    
+   
         
+driver = Client()
+driver.main_menu()
+driver.input_tenant()
+
     
     
