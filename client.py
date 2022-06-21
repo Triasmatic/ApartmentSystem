@@ -7,6 +7,7 @@ class Client:
     def __init__(self) -> None:
         self.tenantList = {}
         self.expenseList = []
+        self.rentPayments = []
         pass
     
     
