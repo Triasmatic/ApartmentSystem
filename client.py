@@ -1,9 +1,10 @@
 from tenant import *
+# from TenantList import *
 
 class Client:
     
     def __init__(self) -> None:
-        self.tenantList = []
+        self.tenantList = {}
         self.expenseList = []
         pass
     
@@ -18,14 +19,24 @@ class Client:
     def input_tenant(self) -> None:
         name = input("Enter tenant name: ")
         apt_num = input("Enter apt number: ")
-        self.tenantList.append(Tenant(name, apt_num))
+        
+        if apt_num not in self.tenantList:
+            self.tenantList[apt_num] = Tenant(name, apt_num)
+        else:
+            print("Room is occupied")
+            
+            
         return
+    
+    
     
    
         
-driver = Client()
-driver.main_menu()
-driver.input_tenant()
+# driver = Client()
+# while True:
+#     driver.display_main_menu()
 
-    
+#     driver.input_tenant()
+
+#     print(driver.tenantList)
     

@@ -8,4 +8,4 @@ class Tenant:
     
     
     def __repr__(self):
-        return f'{self.num}: {self.name}'
+        return f'Name: {self.num},Room: {self.name}'
