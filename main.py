@@ -3,6 +3,8 @@
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter import *
+from tkinter.ttk import *
 
 class RentApp:
     def __int__(self):
@@ -10,8 +12,12 @@ class RentApp:
         window = tk.Tk()
 
         window.title("Rent Application")
-
+        noteStyle = ttk.Style(window)
+        noteStyle.theme_use('clam')
+        noteStyle.configure("TNotebook", tabposition='n')
         tabControl = ttk.Notebook(window)
+
+        print(noteStyle.theme_names())
 
         mainTab = ttk.Frame(tabControl)
         tenantTab = ttk.Frame(tabControl)
@@ -20,13 +26,13 @@ class RentApp:
 
         tabControl.add(mainTab, text="Home Page")
         tabControl.add(tenantTab, text="Tenants")
-        tabControl.add(rentTab, text="Rent Managment")
+        tabControl.add(rentTab, text="Rent Management")
         tabControl.add(reportTab, text="Annual Report")
         tabControl.pack(expand=1,fill='both')
 
         tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
         rentBtn = tk.Button(mainTab, text="Rent Management")
-        reportBtn = tk.Button(mainTab, text="Finanacial")
+        reportBtn = tk.Button(mainTab, text="Financial")
         tenantBtn.grid(column=0, row=0)
         rentBtn.grid(column=1, row=0)
         reportBtn.grid(column=2, row=0)
