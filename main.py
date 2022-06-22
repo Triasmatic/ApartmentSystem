@@ -2,15 +2,31 @@
 # https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
 
 import tkinter as tk
-
+from tkinter import ttk
 
 class RentApp:
     def __int__(self):
         # basic window setup
         window = tk.Tk()
-        tenantBtn = tk.Button(window, text="Tenant Management", bg='orange')
-        rentBtn = tk.Button(window, text="Rent Management")
-        reportBtn = tk.Button(window, text="Finanacial")
+
+        window.title("Rent Application")
+
+        tabControl = ttk.Notebook(window)
+
+        mainTab = ttk.Frame(tabControl)
+        tenantTab = ttk.Frame(tabControl)
+        rentTab = ttk.Frame(tabControl)
+        reportTab = ttk.Frame(tabControl)
+
+        tabControl.add(mainTab, text="Home Page")
+        tabControl.add(tenantTab, text="Tenants")
+        tabControl.add(rentTab, text="Rent Managment")
+        tabControl.add(reportTab, text="Annual Report")
+        tabControl.pack(expand=1,fill='both')
+
+        tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
+        rentBtn = tk.Button(mainTab, text="Rent Management")
+        reportBtn = tk.Button(mainTab, text="Finanacial")
         tenantBtn.grid(column=0, row=0)
         rentBtn.grid(column=1, row=0)
         reportBtn.grid(column=2, row=0)
