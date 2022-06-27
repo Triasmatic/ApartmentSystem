@@ -7,7 +7,7 @@ class Client:
         self.tenantList = {}
         self.expenseList = []
         self.rentPayments = []
-        pass
+        return
     
     
     def input_tenant(self) -> None:
