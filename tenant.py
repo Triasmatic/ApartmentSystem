@@ -13,3 +13,6 @@ class Tenant:
 
     def getPhoneNumber(self):
         return self.phoneNumber
+
+    def __repr__(self):
+        return f'{self.aptNumber} - {self.name}'

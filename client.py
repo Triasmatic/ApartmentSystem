@@ -1,6 +1,4 @@
-from unittest import case
 from tenant import *
-# from TenantList import *
 
 class Client:
     
