@@ -9,7 +9,7 @@ class Tenant:
         return self.name
 
     def getAptNumber(self):
-        return self.aptNo
+        return self.aptNumber
 
     def getPhoneNumber(self):
         return self.phoneNumber
