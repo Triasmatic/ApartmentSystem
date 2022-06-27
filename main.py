@@ -6,6 +6,12 @@ from tkinter import ttk
 from tkinter import *
 from tkinter.ttk import *
 from functools import partial
+import rentRecord
+import rentRow
+import tenant
+import tenantList
+import tenantInputScreen
+import userInterface
 
 # from https://pythonexamples.org/python-tkinter-login-form/
 def valLogin(username, password):
@@ -69,6 +75,9 @@ class RentApp:
         tabControl.add(reportTab, text="Annual Report")
         tabControl.pack(expand=1,fill='both')
 
+        tenantTab.grid_rowconfigure(0, weight=1)
+        tenantTab.grid_columnconfigure(0, weight=1)
+
         tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
         rentBtn = tk.Button(mainTab, text="Rent Management")
         reportBtn = tk.Button(mainTab, text="Financial")
@@ -76,17 +85,101 @@ class RentApp:
         rentBtn.grid(column=1, row=0)
         reportBtn.grid(column=2, row=0)
 
+        tenantTable = ttk.Treeview(tenantTab)
+        tenantTable['columns'] = ('tenent_name', 'tenent_apt_numbner', 'tenent_phone_number')
+        tenantTable['show'] = 'headings'
+        tenantTable.column('#0', width=0, stretch=YES)
+        # tenantTable.column("tenent_id", anchor=CENTER, width=80)
+        tenantTable.column("tenent_name", anchor=CENTER, width=80)
+        tenantTable.column("tenent_apt_numbner", anchor=CENTER, width=80)
+        tenantTable.column("tenent_phone_number", anchor=CENTER, width=80)
+
+        tenantTable.heading('#0', text="", anchor=CENTER)
+        # tenantTable.heading("tenent_id", text="Tenent ID", anchor=CENTER)
+        tenantTable.heading("tenent_name", text="Tenent Name", anchor=CENTER)
+        tenantTable.heading("tenent_apt_numbner", text="Apartment Number", anchor=CENTER)
+        tenantTable.heading("tenent_phone_number", text="Phone Number", anchor=CENTER)
+
+        tenantTable.grid(column=0, row=0, sticky="nsew")
+
+        def addT():
+            addTWindow = tk.Tk()
+            nameText = tk.Text(addTWindow, height=1, width=50)
+            nameText.grid(column=1,row=0)
+            aptText = tk.Text(addTWindow, height=1, width=50)
+            aptText.grid(column=1,row=1)
+            phoneText = tk.Text(addTWindow, height=1, width=50)
+            phoneText.grid(column=1,row=2)
+            nameLabel = tk.Label(addTWindow, text="Name ").grid(column=0,row=0)
+            aptLabel = tk.Label(addTWindow, text="Apt ").grid(column=0, row=1)
+            phoneLabel = tk.Label(addTWindow, text="Phone ").grid(column=0, row=2)
+            def tempAddT():
+                tenantTable.insert("", 'end', values=(nameText.get('1.0','end'), aptText.get('1.0','end'), phoneText.get('1.0','end')))
+                addTWindow.destroy()
+            tAddBtn = tk.Button(addTWindow, text="Add this tenant", command=tempAddT).grid(column=0, row=4)
+
+        def editT():
+            editTWindow = tk.Tk()
+            selctedItem = tenantTable.selection()
+            nameText = tk.Text(editTWindow, height=1, width=50, text=selctedItem)
+            nameText.grid(column=1, row=0)
+            aptText = tk.Text(editTWindow, height=1, width=50, text=selctedItem)
+            aptText.grid(column=1, row=1)
+            phoneText = tk.Text(editTWindow, height=1, width=50, text=selctedItem)
+            phoneText.grid(column=1, row=2)
+            nameLabel = tk.Label(editTWindow, text="Name ").grid(column=0, row=0)
+            aptLabel = tk.Label(editTWindow, text="Apt ").grid(column=0, row=1)
+            phoneLabel = tk.Label(editTWindow, text="Phone ").grid(column=0, row=2)
+            def tempEditT():
+                tenantTable.item(selctedItem, text="bulb", values=(nameText.get('1.0','end'), aptText.get('1.0','end'), phoneText.get('1.0','end')))
+                editTWindow.destroy()
+            tEditBtn = tk.Button(editTWindow, text="Edit this tenant", command=tempEditT).grid(column=0, row=4)
+
+        def remT():
+            selectedItem = tenantTable.selection()[0]
+            tenantTable.delete(selectedItem)
+
+
+        tb1 = tk.Frame(tenantTab)
+        tb1.grid(column=0,row=1)
+        tenantAddBtn = Button(tb1, text="Add Tenant", command=addT)
+        tenantAddBtn.grid(column=0, row=0)
+
+        tenantEditBtn = Button(tb1, text="Edit Tenant", command=editT)
+        tenantEditBtn.grid(column=1, row=0)
+
+        tenantRemoveBtn = Button(tb1, text="Remove Tenant", command=remT)
+        tenantRemoveBtn.grid(column=2, row=0)
+
         window.title("Tenant Management System")
         window.geometry('700x550')
 
         windowFrames = []
 
+        l = landingPage.__int__(self)
+        t = tenantPage.__init__(self)
+        r = rentPage.__init__(self)
+        e = expensesPage.__init__(self)
+
 
         window.mainloop()
+
 
 class landingPage:
     def __int__(self):
         print("landing page window")
+
+class tenantPage:
+    def __init__(self):
+        print("Tenant page")
+
+class rentPage:
+    def __init__(self):
+        print("rent page")
+
+class expensesPage:
+    def __init__(self):
+        print("expense page")
 
 
 
