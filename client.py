@@ -8,19 +8,6 @@ class Client:
         self.expenseList = []
         self.rentPayments = []
         return
-    
-    
-    def input_tenant(self) -> None:
-        name = input("Enter tenant name: ")
-        apt_num = input("Enter apt number: ")
-        
-        if apt_num not in self.tenantList:
-            self.tenantList[apt_num] = Tenant(name, apt_num)
-        else:
-            print("Room is occupied")
-            
-        
-        return
    
 #test run    
 # driver = Client()

@@ -4,19 +4,15 @@ class tenantList:
 
     def __init__(self):
         self.tenantList = {}
-
-    # def insertTenant(self, tenant):
-    #     self.tenants.append(tenant)
         
     def input_tenant(self) -> None:
-        name = input("Enter tenant name: ")
+        name = input("Enter tenant name: ") #realistaically, the input statements should be in the client logic
         apt_num = input("Enter apt number: ")
         
         if apt_num not in self.tenantList:
             self.tenantList[apt_num] = Tenant(name, apt_num)
         else:
             print("Room is occupied")
-            
         return
 
     def getAptNumber(self, string):

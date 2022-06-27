@@ -1,5 +1,5 @@
 from tenantList import tenantList
-
+#Check UI class
 
 class tenantInputScreen:
     def __init__(self, tenantList):
