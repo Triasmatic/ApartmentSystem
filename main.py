@@ -89,13 +89,11 @@ class RentApp:
         tenantTable['columns'] = ('tenent_name', 'tenent_apt_numbner', 'tenent_phone_number')
         tenantTable['show'] = 'headings'
         tenantTable.column('#0', width=0, stretch=YES)
-        # tenantTable.column("tenent_id", anchor=CENTER, width=80)
         tenantTable.column("tenent_name", anchor=CENTER, width=80)
         tenantTable.column("tenent_apt_numbner", anchor=CENTER, width=80)
         tenantTable.column("tenent_phone_number", anchor=CENTER, width=80)
 
         tenantTable.heading('#0', text="", anchor=CENTER)
-        # tenantTable.heading("tenent_id", text="Tenent ID", anchor=CENTER)
         tenantTable.heading("tenent_name", text="Tenent Name", anchor=CENTER)
         tenantTable.heading("tenent_apt_numbner", text="Apartment Number", anchor=CENTER)
         tenantTable.heading("tenent_phone_number", text="Phone Number", anchor=CENTER)
@@ -113,27 +111,28 @@ class RentApp:
             nameLabel = tk.Label(addTWindow, text="Name ").grid(column=0,row=0)
             aptLabel = tk.Label(addTWindow, text="Apt ").grid(column=0, row=1)
             phoneLabel = tk.Label(addTWindow, text="Phone ").grid(column=0, row=2)
-            def tempAddT():
-                tenantTable.insert("", 'end', values=(nameText.get('1.0','end'), aptText.get('1.0','end'), phoneText.get('1.0','end')))
-                addTWindow.destroy()
-            tAddBtn = tk.Button(addTWindow, text="Add this tenant", command=tempAddT).grid(column=0, row=4)
 
-        def editT():
-            editTWindow = tk.Tk()
-            selctedItem = tenantTable.selection()
-            nameText = tk.Text(editTWindow, height=1, width=50, text=selctedItem)
-            nameText.grid(column=1, row=0)
-            aptText = tk.Text(editTWindow, height=1, width=50, text=selctedItem)
-            aptText.grid(column=1, row=1)
-            phoneText = tk.Text(editTWindow, height=1, width=50, text=selctedItem)
-            phoneText.grid(column=1, row=2)
-            nameLabel = tk.Label(editTWindow, text="Name ").grid(column=0, row=0)
-            aptLabel = tk.Label(editTWindow, text="Apt ").grid(column=0, row=1)
-            phoneLabel = tk.Label(editTWindow, text="Phone ").grid(column=0, row=2)
-            def tempEditT():
-                tenantTable.item(selctedItem, text="bulb", values=(nameText.get('1.0','end'), aptText.get('1.0','end'), phoneText.get('1.0','end')))
-                editTWindow.destroy()
-            tEditBtn = tk.Button(editTWindow, text="Edit this tenant", command=tempEditT).grid(column=0, row=4)
+            btnPlusLabFrame= tk.Frame(addTWindow)
+            errorLabel = tk.Label(btnPlusLabFrame, text="")
+            errorLabel.grid(column=1, row=0)
+
+            def checkDupApartment(comparevalue):
+                children = tenantTable.get_children('')
+                for child in children:
+                    values = tenantTable.item(child, 'values')
+                    if(comparevalue == values[1] and str(comparevalue) == str(values[1])):
+                        return True
+                return False
+
+            def tempAddT():
+                t = tenant.Tenant(nameText.get('1.0','end'), aptText.get('1.0','end'), phoneText.get('1.0','end'))
+                if(checkDupApartment(t.getAptNumber())):
+                    errorLabel.config(text="ERROR: Apartment is occupied!", fg='RED')
+                    return
+                tenantTable.insert("", 'end', values=(t.getName(), t.getAptNumber(),t.getPhoneNumber()))
+                addTWindow.destroy()
+            tAddBtn = tk.Button(btnPlusLabFrame, text="Add this tenant", command=tempAddT).grid(column=0, row=0)
+            btnPlusLabFrame.grid(column=0, row=4)
 
         def remT():
             selectedItem = tenantTable.selection()[0]
@@ -144,9 +143,6 @@ class RentApp:
         tb1.grid(column=0,row=1)
         tenantAddBtn = Button(tb1, text="Add Tenant", command=addT)
         tenantAddBtn.grid(column=0, row=0)
-
-        tenantEditBtn = Button(tb1, text="Edit Tenant", command=editT)
-        tenantEditBtn.grid(column=1, row=0)
 
         tenantRemoveBtn = Button(tb1, text="Remove Tenant", command=remT)
         tenantRemoveBtn.grid(column=2, row=0)
