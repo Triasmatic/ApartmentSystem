@@ -43,9 +43,8 @@ class loginWindow:
     def quitLogin(self):
         self.window.destroy()
         RentApp().__int__()
-
-
-
+        
+        
 class RentApp:
     def __int__(self):
         # basic window setup
@@ -76,6 +75,7 @@ class RentApp:
         tenantBtn.grid(column=0, row=0)
         rentBtn.grid(column=1, row=0)
         reportBtn.grid(column=2, row=0)
+
         window.title("Tenant Management System")
         window.geometry('700x550')
 
