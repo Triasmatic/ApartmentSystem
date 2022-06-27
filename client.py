@@ -1,4 +1,5 @@
 from tenant import *
+import userInterface as UI
 
 class Client:
     
@@ -20,43 +21,26 @@ class Client:
             
         
         return
-    
-     
-    
-class UI:
-    def main_menu() -> None:
-        return "i - input data\nd - display report\nq - quit program\n"
-    
-    def input_menu() -> None:
-        return "t - add tenant\nr - record rent\ne - record expense\n"
-    
-    def display_tenants(prog):
-        print("Room - Name")
-        print("-----------")
-        for element in prog.tenantList:
-            print(prog.tenantList.get(element))
-            
-        return 
    
-        
-driver = Client()
+#test run    
+# driver = Client()
 
-while True:
-    option = input(UI.main_menu())
+# while True:
+#     option = input(UI.main_menu())
     
-    if option == "i": #input data 
-        option = input(UI.input_menu())
-        if option == "t":
-            driver.input_tenant()
-        elif option == "r":
-            pass #record rent
-        elif option == "e":
-            pass #record expense
+#     if option == "i": #input data 
+#         option = input(UI.input_menu())
+#         if option == "t":
+#             driver.input_tenant()
+#         elif option == "r":
+#             pass #record rent
+#         elif option == "e":
+#             pass #record expense
      
-    elif option == "d": #display report
-        UI.display_tenants(driver)
+#     elif option == "d": #display report
+#         UI.display_tenants(driver)
         
-    elif option == "q": #quit program
-        break
+#     elif option == "q": #quit program
+#         break
     
-print("Logging out...")
+# print("Logging out...")

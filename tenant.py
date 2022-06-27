@@ -15,4 +15,4 @@ class Tenant:
         return self.phoneNumber
 
     def __repr__(self):
-        return f'{self.aptNumber} - {self.name}'
+        return f"Tenant: {self.name}, Apt Number: {self.name}"
