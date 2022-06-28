@@ -85,14 +85,6 @@ class RentApp:
         rentTab.grid_rowconfigure(0, weight=1)
         rentTab.grid_columnconfigure(0, weight=1)
 
-        #setup of main tab buttons
-        # tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
-        # rentBtn = tk.Button(mainTab, text="Rent Management")
-        # reportBtn = tk.Button(mainTab, text="Financial")
-        # tenantBtn.grid(column=0, row=0)
-        # rentBtn.grid(column=1, row=0)
-        # reportBtn.grid(column=2, row=0)
-
         # setup of tables for tenant
         tenantTable = ttk.Treeview(tenantTab)
         tenantTable['columns'] = ('tenent_name', 'tenent_apt_numbner', 'tenent_phone_number')
