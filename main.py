@@ -70,11 +70,13 @@ class RentApp:
         tenantTab = ttk.Frame(tabControl)
         rentTab = ttk.Frame(tabControl)
         reportTab = ttk.Frame(tabControl, style="TNotebook")
+        expenseTab = ttk.Frame(tabControl)
 
         tabControl.add(mainTab, text="Home Page")
         tabControl.add(tenantTab, text="Tenants")
         tabControl.add(rentTab, text="Rent Management")
         tabControl.add(reportTab, text="Annual Report")
+        tabControl.add(expenseTab, text="Expense Management")
         tabControl.pack(expand=1,fill='both')
         img = ImageTk.PhotoImage(Image.open("RentAppShark.png"))
         imgLabel = tk.Label(mainTab, image = img)
@@ -84,20 +86,22 @@ class RentApp:
         tenantTab.grid_columnconfigure(0, weight=1)
         rentTab.grid_rowconfigure(0, weight=1)
         rentTab.grid_columnconfigure(0, weight=1)
+        expenseTab.grid_rowconfigure(0, weight=1)
+        expenseTab.grid_columnconfigure(0, weight=1)
 
         # setup of tables for tenant
         tenantTable = ttk.Treeview(tenantTab)
-        tenantTable['columns'] = ('tenent_name', 'tenent_apt_numbner', 'tenent_phone_number')
+        tenantTable['columns'] = ('tenant_name', 'tenant_apt_number', 'tenant_phone_number')
         tenantTable['show'] = 'headings'
         tenantTable.column('#0', width=0, stretch=YES)
-        tenantTable.column("tenent_name", anchor=CENTER, width=80)
-        tenantTable.column("tenent_apt_numbner", anchor=CENTER, width=80)
-        tenantTable.column("tenent_phone_number", anchor=CENTER, width=80)
+        tenantTable.column("tenant_name", anchor=CENTER, width=80)
+        tenantTable.column("tenant_apt_number", anchor=CENTER, width=80)
+        tenantTable.column("tenant_phone_number", anchor=CENTER, width=80)
 
         tenantTable.heading('#0', text="", anchor=CENTER)
-        tenantTable.heading("tenent_name", text="Tenent Name", anchor=CENTER)
-        tenantTable.heading("tenent_apt_numbner", text="Apartment Number", anchor=CENTER)
-        tenantTable.heading("tenent_phone_number", text="Phone Number", anchor=CENTER)
+        tenantTable.heading("tenant_name", text="Tenent Name", anchor=CENTER)
+        tenantTable.heading("tenant_apt_number", text="Apartment Number", anchor=CENTER)
+        tenantTable.heading("tenant_phone_number", text="Phone Number", anchor=CENTER)
 
         tenantTable.grid(column=0, row=0, sticky="nsew")
 
@@ -240,8 +244,16 @@ class RentApp:
                     else:
                         paymentoutput += "Appartment: " + values[0] + getallpayments() + "\n"
                         tenantsShown.append(str(values[0]))
-                paymentoutput += '\nTotal Earned: '
-                paymentoutput += str(totalSum) + '\n'
+                expChildren = expTable.get_children('')
+                totalExpense = 0
+                for child in expChildren:
+                    values = expTable.item(child, 'values')
+                    totalExpense += int(values[4])
+                paymentoutput += "Earning: " + str(totalSum) + '\n'
+                paymentoutput += "Expenses: " + str(totalExpense) + '\n'
+                totalMoney = totalSum-totalExpense
+                paymentoutput += '\nTotal Money Owned(negative implies in debt): '
+                paymentoutput += str(totalMoney) + '\n'
                 return paymentoutput
                 pass
             totalRent = getReport()
@@ -262,9 +274,83 @@ class RentApp:
         arLabel.pack()
         arButton = tk.Button(reportTab, text="Generate Annual report", command=genAnnualReport).pack()
 
+        expTable = ttk.Treeview(expenseTab)
+        expTable['columns'] = ('month', 'day', 'category', 'payee', 'amount')
+        expTable['show'] = 'headings'
+        expTable.column('#0', width=0, stretch=YES)
+        expTable.column("month", anchor=CENTER, width=30)
+        expTable.column("day", anchor=CENTER, width=20)
+        expTable.column("category", anchor=CENTER, width=120)
+        expTable.column("payee", anchor=CENTER, width=120)
+        expTable.column("amount", anchor=CENTER, width=40)
 
+        expTable.heading('#0', text="", anchor=CENTER)
+        expTable.heading("month", text="Month", anchor=CENTER)
+        expTable.heading("day", text="Day", anchor=CENTER)
+        expTable.heading("category", text="Category", anchor=CENTER)
+        expTable.heading("payee", text="Payee", anchor=CENTER)
+        expTable.heading("amount", text="Amount", anchor=CENTER)
 
-        window.title("Tenant Management System")
+        expTable.grid(column=0, row=0, sticky='nsew')
+
+        expBtnFrame = tk.Frame(expenseTab)
+        expBtnFrame.grid(column=0, row=1)
+
+        def addExp():
+            addWindow = tk.Tk()
+            monthText = tk.Entry(addWindow)
+            monthText.grid(column=1, row=0)
+            dayText = tk.Entry(addWindow)
+            dayText.grid(column=1, row=1)
+            categoryText = tk.Entry(addWindow)
+            categoryText.grid(column=1, row=2)
+            payeeText = tk.Entry(addWindow)
+            payeeText.grid(column=1, row=3)
+            amountText = tk.Entry(addWindow)
+            amountText.grid(column=1, row=4)
+            monthLabel = tk.Label(addWindow, text="Month ").grid(column=0, row=0)
+            dayLabel = tk.Label(addWindow, text="Day ").grid(column=0, row=1)
+            categoryLabel = tk.Label(addWindow, text="Category ").grid(column=0, row=2)
+            payeeLabel = tk.Label(addWindow, text="Payee ").grid(column=0, row=3)
+            amountLabel = tk.Label(addWindow, text="Amount ").grid(column=0, row=4)
+
+            def addExpHelper():
+                e = expense.expense(monthText.get(), dayText.get(), categoryText.get(), payeeText.get(), amountText.get())
+                expTable.insert('','end',values=(e.getMonth(), e.getDay(), e.getCategory(), e.getPayee(), e.getAmount()))
+                addWindow.destroy()
+            tempAddExpBtn = tk.Button(addWindow, text="confirm adding expense", command=addExpHelper).grid(column=0, row=5)
+            pass
+        pass
+
+        def removeExpRow():
+            selectedItem = expTable.selection()[0]
+            expTable.delete(selectedItem)
+
+        def calcExpense():
+            calcExpWindow = tk.Tk()
+
+            def getExpReport():
+                children = expTable.get_children('')
+                totalExpense = 0
+                expoutput = ''
+                for child in children:
+                    values = expTable.item(child, 'values')
+                    totalExpense = totalExpense + int(values[4])
+                    expoutput += values[1] + "-" + values[0] + ":\n\t " + values[3] + " was paid for " + values[2] + " and was paid $" + values[4] + "\n"
+                expoutput += "Total Expense: $" + str(totalExpense)
+                return expoutput
+            expReport = getExpReport()
+
+            totalExpLabel = tk.Label(calcExpWindow, text =expReport)
+            totalExpLabel.grid(column=0, row=0)
+            exitExpBtn = tk.Button(calcExpWindow, text="Return to main program", command=lambda: calcExpWindow.destroy()).grid(column=0, row=1)
+        pass
+
+        addExpenseBtn = tk.Button(expBtnFrame, text="Add Expense", command=addExp).grid(column=0, row=0)
+        removeExpenseBtn = tk.Button(expBtnFrame, text="Remove Expense", command=removeExpRow).grid(column=1, row=0)
+        calcExpenseBtn = tk.Button(expBtnFrame, text="Calculate Expenses", command=calcExpense).grid(column=2, row=0)
+
+        window.title("Tenant Management System Version 1.0")
         window.geometry('700x550')
 
         windowFrames = []
