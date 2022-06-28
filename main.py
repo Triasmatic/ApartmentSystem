@@ -57,7 +57,6 @@ class RentApp:
     def __int__(self):
         # basic window setup
         window = tk.Tk()
-
         window.title("Rent Application")
         noteStyle = ttk.Style(window)
         noteStyle.theme_use('clam')
@@ -66,6 +65,7 @@ class RentApp:
 
         print(noteStyle.theme_names())
 
+        # Setup of tkinter Notebooks (Tabs)
         mainTab = ttk.Frame(tabControl)
         tenantTab = ttk.Frame(tabControl)
         rentTab = ttk.Frame(tabControl)
@@ -82,6 +82,7 @@ class RentApp:
         rentTab.grid_rowconfigure(0, weight=1)
         rentTab.grid_columnconfigure(0, weight=1)
 
+        #setup of main tab buttons
         tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
         rentBtn = tk.Button(mainTab, text="Rent Management")
         reportBtn = tk.Button(mainTab, text="Financial")
@@ -89,6 +90,7 @@ class RentApp:
         rentBtn.grid(column=1, row=0)
         reportBtn.grid(column=2, row=0)
 
+        # setup of tables for tenant
         tenantTable = ttk.Treeview(tenantTab)
         tenantTable['columns'] = ('tenent_name', 'tenent_apt_numbner', 'tenent_phone_number')
         tenantTable['show'] = 'headings'
@@ -104,6 +106,7 @@ class RentApp:
 
         tenantTable.grid(column=0, row=0, sticky="nsew")
 
+        # add tenant window
         def addT():
             addTWindow = tk.Tk()
             nameText = tk.Entry(addTWindow)
@@ -119,7 +122,7 @@ class RentApp:
             btnPlusLabFrame= tk.Frame(addTWindow)
             errorLabel = tk.Label(btnPlusLabFrame, text="")
             errorLabel.grid(column=0, row=1)
-
+            # check if apartment is occupied
             def checkDupApartment(comparevalue):
                 children = tenantTable.get_children('')
                 for child in children:
@@ -127,7 +130,7 @@ class RentApp:
                     if comparevalue == values[1] and str(comparevalue) == str(values[1]):
                         return True
                 return False
-
+            # insert tenant to table
             def tempAddT():
                 t = tenant.Tenant(nameText.get(), aptText.get(), phoneText.get())
                 if checkDupApartment(t.getAptNumber()):
@@ -137,19 +140,22 @@ class RentApp:
                 addTWindow.destroy()
             tAddBtn = tk.Button(btnPlusLabFrame, text="Add this tenant", command=tempAddT).grid(column=0, row=0)
             btnPlusLabFrame.grid(column=0, row=4)
-
+        # remove selected tenant
         def remT():
             selectedItem = tenantTable.selection()[0]
             tenantTable.delete(selectedItem)
 
         tb1 = tk.Frame(tenantTab)
         tb1.grid(column=0,row=1)
+
+        # tennant add/remove buttons
         tenantAddBtn = Button(tb1, text="Add Tenant", command=addT)
         tenantAddBtn.grid(column=0, row=0)
 
         tenantRemoveBtn = Button(tb1, text="Remove Tenant", command=remT)
         tenantRemoveBtn.grid(column=2, row=0)
 
+        # setup of rent table
         rentTable = ttk.Treeview(rentTab)
         rentTable['columns'] = ('apt_number', 'date_paid', 'amount_paid')
         rentTable['show'] = 'headings'
