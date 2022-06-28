@@ -269,24 +269,5 @@ class RentApp:
         windowFrames = []
         window.mainloop()
 
-
-class landingPage:
-    def __int__(self):
-        print("landing page window")
-
-class tenantPage:
-    def __init__(self):
-        print("Tenant page")
-
-class rentPage:
-    def __init__(self):
-        print("rent page")
-
-class expensesPage:
-    def __init__(self):
-        print("expense page")
-
-
-
 if __name__ == '__main__':
     RentApp().__int__()
