@@ -6,7 +6,7 @@ from tkinter import ttk
 from tkinter import *
 from tkinter.ttk import *
 from functools import partial
-
+from PIL import ImageTk, Image
 import expense
 import rentRecord
 import rentRow
@@ -76,6 +76,9 @@ class RentApp:
         tabControl.add(rentTab, text="Rent Management")
         tabControl.add(reportTab, text="Annual Report")
         tabControl.pack(expand=1,fill='both')
+        img = ImageTk.PhotoImage(Image.open("RentAppShark.png"))
+        imgLabel = tk.Label(mainTab, image = img)
+        imgLabel.pack()
 
         tenantTab.grid_rowconfigure(0, weight=1)
         tenantTab.grid_columnconfigure(0, weight=1)
@@ -83,12 +86,12 @@ class RentApp:
         rentTab.grid_columnconfigure(0, weight=1)
 
         #setup of main tab buttons
-        tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
-        rentBtn = tk.Button(mainTab, text="Rent Management")
-        reportBtn = tk.Button(mainTab, text="Financial")
-        tenantBtn.grid(column=0, row=0)
-        rentBtn.grid(column=1, row=0)
-        reportBtn.grid(column=2, row=0)
+        # tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
+        # rentBtn = tk.Button(mainTab, text="Rent Management")
+        # reportBtn = tk.Button(mainTab, text="Financial")
+        # tenantBtn.grid(column=0, row=0)
+        # rentBtn.grid(column=1, row=0)
+        # reportBtn.grid(column=2, row=0)
 
         # setup of tables for tenant
         tenantTable = ttk.Treeview(tenantTab)
