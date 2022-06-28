@@ -6,6 +6,8 @@ from tkinter import ttk
 from tkinter import *
 from tkinter.ttk import *
 from functools import partial
+
+import expense
 import rentRecord
 import rentRow
 import tenant
@@ -49,8 +51,8 @@ class loginWindow:
     def quitLogin(self):
         self.window.destroy()
         RentApp().__int__()
-        
-        
+
+
 class RentApp:
     def __int__(self):
         # basic window setup
@@ -59,7 +61,7 @@ class RentApp:
         window.title("Rent Application")
         noteStyle = ttk.Style(window)
         noteStyle.theme_use('clam')
-        noteStyle.configure("TNotebook", tabposition='n')
+        noteStyle.configure("TNotebook", tabposition='n', background='white')
         tabControl = ttk.Notebook(window)
 
         print(noteStyle.theme_names())
@@ -67,7 +69,7 @@ class RentApp:
         mainTab = ttk.Frame(tabControl)
         tenantTab = ttk.Frame(tabControl)
         rentTab = ttk.Frame(tabControl)
-        reportTab = ttk.Frame(tabControl)
+        reportTab = ttk.Frame(tabControl, style="TNotebook")
 
         tabControl.add(mainTab, text="Home Page")
         tabControl.add(tenantTab, text="Tenants")
@@ -77,6 +79,8 @@ class RentApp:
 
         tenantTab.grid_rowconfigure(0, weight=1)
         tenantTab.grid_columnconfigure(0, weight=1)
+        rentTab.grid_rowconfigure(0, weight=1)
+        rentTab.grid_columnconfigure(0, weight=1)
 
         tenantBtn = tk.Button(mainTab, text="Tenant Management", bg='orange')
         rentBtn = tk.Button(mainTab, text="Rent Management")
@@ -102,11 +106,11 @@ class RentApp:
 
         def addT():
             addTWindow = tk.Tk()
-            nameText = tk.Text(addTWindow, height=1, width=50)
+            nameText = tk.Entry(addTWindow)
             nameText.grid(column=1,row=0)
-            aptText = tk.Text(addTWindow, height=1, width=50)
+            aptText = tk.Entry(addTWindow)
             aptText.grid(column=1,row=1)
-            phoneText = tk.Text(addTWindow, height=1, width=50)
+            phoneText = tk.Entry(addTWindow)
             phoneText.grid(column=1,row=2)
             nameLabel = tk.Label(addTWindow, text="Name ").grid(column=0,row=0)
             aptLabel = tk.Label(addTWindow, text="Apt ").grid(column=0, row=1)
@@ -114,19 +118,19 @@ class RentApp:
 
             btnPlusLabFrame= tk.Frame(addTWindow)
             errorLabel = tk.Label(btnPlusLabFrame, text="")
-            errorLabel.grid(column=1, row=0)
+            errorLabel.grid(column=0, row=1)
 
             def checkDupApartment(comparevalue):
                 children = tenantTable.get_children('')
                 for child in children:
                     values = tenantTable.item(child, 'values')
-                    if(comparevalue == values[1] and str(comparevalue) == str(values[1])):
+                    if comparevalue == values[1] and str(comparevalue) == str(values[1]):
                         return True
                 return False
 
             def tempAddT():
-                t = tenant.Tenant(nameText.get('1.0','end'), aptText.get('1.0','end'), phoneText.get('1.0','end'))
-                if(checkDupApartment(t.getAptNumber())):
+                t = tenant.Tenant(nameText.get(), aptText.get(), phoneText.get())
+                if checkDupApartment(t.getAptNumber()):
                     errorLabel.config(text="ERROR: Apartment is occupied!", fg='RED')
                     return
                 tenantTable.insert("", 'end', values=(t.getName(), t.getAptNumber(),t.getPhoneNumber()))
@@ -138,7 +142,6 @@ class RentApp:
             selectedItem = tenantTable.selection()[0]
             tenantTable.delete(selectedItem)
 
-
         tb1 = tk.Frame(tenantTab)
         tb1.grid(column=0,row=1)
         tenantAddBtn = Button(tb1, text="Add Tenant", command=addT)
@@ -147,17 +150,123 @@ class RentApp:
         tenantRemoveBtn = Button(tb1, text="Remove Tenant", command=remT)
         tenantRemoveBtn.grid(column=2, row=0)
 
+        rentTable = ttk.Treeview(rentTab)
+        rentTable['columns'] = ('apt_number', 'date_paid', 'amount_paid')
+        rentTable['show'] = 'headings'
+        rentTable.column('#0', width=0, stretch=YES)
+        rentTable.column("apt_number", anchor=CENTER, width=80)
+        rentTable.column("date_paid", anchor=CENTER, width=80)
+        rentTable.column("amount_paid", anchor=CENTER, width=80)
+
+        rentTable.heading('#0', text="", anchor=CENTER)
+        rentTable.heading("apt_number", text='Apartment Number', anchor=CENTER)
+        rentTable.heading("date_paid", text='Payment Date', anchor=CENTER)
+        rentTable.heading("amount_paid", text='Payment Amount', anchor=CENTER)
+        rentTable.grid(column=0, row=0, sticky='nsew')
+
+        rb1 = tk.Frame(rentTab)
+        rb1.grid(column=0, row=1)
+
+        def subRent():
+            addRWindow = tk.Tk()
+            aptEntry = tk.Entry(addRWindow)
+            aptEntry.grid(column=1, row=0)
+            dateEntry = tk.Entry(addRWindow)
+            dateEntry.grid(column=1, row=1)
+            amountEntry = tk.Entry(addRWindow)
+            amountEntry.grid(column=1, row=2)
+            aptLabel = tk.Label(addRWindow, text="Apartment Number ").grid(column=0, row=0)
+            dateLabel = tk.Label(addRWindow, text="Payment Date ").grid(column=0, row=1)
+            amountLabel = tk.Label(addRWindow, text="Payment Amount ").grid(column=0, row=2)
+
+
+            def checkIfAptExists(aptNumber):
+                children = tenantTable.get_children('')
+                for child in children:
+                    values = tenantTable.item(child, 'values')
+                    if aptNumber == values[1] and str(aptNumber) == str(values[1]):
+                        return True
+                return False
+
+            def checkIfAlreadyPaid(aptNumber, datePaid):
+                rentChildren = rentTable.get_children('')
+                for child in rentChildren:
+                    values = rentTable.item(child, 'values')
+                    if aptNumber == values[0] and datePaid == values[1] and str(aptNumber) == str(values[0]) and str(datePaid) == str(values[1]):
+                        return True
+                return False
+
+            def rentConf():
+                r = rentRow.rentRow(aptEntry.get(), dateEntry.get(), amountEntry.get())
+                if checkIfAptExists(r.getApt()) and not checkIfAlreadyPaid(r.getApt(), r.getDatePaid()):
+                    rentTable.insert("",'end', values=(r.getApt(), r.getDatePaid(), r.getAmount()))
+                    addRWindow.destroy()
+                else:
+                    errorLabel.config(text="ERROR: This apartment is not occupied or rent already paid this month!")
+
+            tempFrameRent = tk.Frame(addRWindow)
+            tempFrameRent.grid(column=0, row=4)
+            errorLabel = tk.Label(tempFrameRent, text="", fg="RED")
+            errorLabel.grid(column=0, row=1)
+            confirmBtn = tk.Button(tempFrameRent, text='Confirm rent payment', command=rentConf)
+            confirmBtn.grid(column=0, row=0)
+
+
+        rentPayButton = tk.Button(rb1, text="Submit Rent", command=subRent)
+        rentPayButton.grid(column = 0, row=0)
+        def genAnnualReport():
+            arWindow = tk.Tk()
+
+            def getallpayments():
+                children = rentTable.get_children('')
+                paymentoutput = ''
+                for index, child in enumerate(children):
+                    values = rentTable.item(child, 'values')
+                    paymentoutput += "\n\tMonth: " + values[1][0] + " | amount paid: " + values[2]
+
+                return paymentoutput
+                pass
+            def getReport():
+                children = rentTable.get_children('')
+                totalSum = 0
+                paymentoutput = ""
+                tenantsShown = []
+                for child in children:
+                    values = rentTable.item(child, 'values')
+                    totalSum = totalSum + int(values[2])
+                    if values[0] in tenantsShown:
+                        continue
+                    else:
+                        paymentoutput += "Appartment: " + values[0] + getallpayments() + "\n"
+                        tenantsShown.append(str(values[0]))
+                paymentoutput += '\nTotal Earned: '
+                paymentoutput += str(totalSum) + '\n'
+                return paymentoutput
+                pass
+            totalRent = getReport()
+            totalRent += '\n'
+
+            arEntry = tk.Label(arWindow, text=totalRent)
+            # arEntry.config(textvariable=sampleText)
+            # arScrollbar = tk.Scrollbar(arWindow, orient='vertical', command=arEntry.xview)
+            # arEntry.config(xscrollcommand=arScrollbar.set)
+            arEntry.grid(column=0, row=0)
+            # arScrollbar.grid(column=2, row=0)
+            def exitAR():
+                arWindow.destroy()
+
+            endARButton = tk.Button(arWindow, text='exit annual report', command=exitAR).grid(column=0,row=1)
+
+        arLabel = tk.Label(reportTab, height=12, bg="WHITE", text="Here you can check your annual report. Press the button below.")
+        arLabel.pack()
+        arButton = tk.Button(reportTab, text="Generate Annual report", command=genAnnualReport).pack()
+
+
+
         window.title("Tenant Management System")
         window.geometry('700x550')
 
         windowFrames = []
-
-        l = landingPage.__int__(self)
-        t = tenantPage.__init__(self)
-        r = rentPage.__init__(self)
-        e = expensesPage.__init__(self)
-
-
         window.mainloop()
 
 
